@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CEAT Warranty Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 20px;
+      padding-bottom: 40px;
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 800px;
+    }
+    .warranty-item {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    .remove-warranty {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .response-container {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      display: none;
+    }
+    .success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">CEAT Warranty Registration</h1>
+    
+    <div class="card mb-4">
+      <div class="card-body">
+        <form id="warrantyForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mobile">Mobile Number*</label>
+                <input type="text" class="form-control" id="mobile" placeholder="10-digit mobile number" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="customerName">Customer Name*</label>
+                <input type="text" class="form-control" id="customerName" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="dealerName">Dealer Name*</label>
+                <input type="text" class="form-control" id="dealerName" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="warrantyDate">Warranty Registration Date*</label>
+                <input type="text" class="form-control" id="warrantyDate" placeholder="DD/MM/YYYY" required>
+              </div>
+            </div>
+          </div>
+          
+          <h4 class="mt-4">Warranty Details</h4>
+          <div id="warrantyDetails">
+            <!-- Warranty items will be added here -->
+            <div class="warranty-item" data-index="0">
+              <button type="button" class="btn-close remove-warranty" aria-label="Remove"></button>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>Warranty Number*</label>
+                    <input type="text" class="form-control warranty-number" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>Product Name*</label>
+                    <input type="text" class="form-control product-name" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>Tyre Size*</label>
+                    <input type="text" class="form-control tyre-size" required>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" id="addWarranty" class="btn btn-secondary mt-2">+ Add Another Warranty</button>
+          
+          <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Submit Warranty</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <div id="responseContainer" class="response-container">
+      <h4 id="responseTitle"></h4>
+      <pre id="responseData" class="mt-2"></pre>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add warranty item
+      document.getElementById('addWarranty').addEventListener('click', function() {
+        const warrantyDetails = document.getElementById('warrantyDetails');
+        const index = warrantyDetails.children.length;
+        
+        const newItem = document.createElement('div');
+        newItem.className = 'warranty-item';
+        newItem.dataset.index = index;
+        newItem.innerHTML = `
+          <button type="button" class="btn-close remove-warranty" aria-label="Remove"></button>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Warranty Number*</label>
+                <input type="text" class="form-control warranty-number" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Product Name*</label>
+                <input type="text" class="form-control product-name" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Tyre Size*</label>
+                <input type="text" class="form-control tyre-size" required>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        warrantyDetails.appendChild(newItem);
+        
+        // Add event listener to the new remove button
+        newItem.querySelector('.remove-warranty').addEventListener('click', function() {
+          if (warrantyDetails.children.length > 1) {
+            warrantyDetails.removeChild(newItem);
+          }
+        });
+      });
+      
+      // Remove warranty item
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-warranty')) {
+          const warrantyDetails = document.getElementById('warrantyDetails');
+          if (warrantyDetails.children.length > 1) {
+            e.target.closest('.warranty-item').remove();
+          }
+        }
+      });
+      
+      // Submit form
+      document.getElementById('warrantyForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Collect all warranty items
+        const warrantyItems = [];
+        document.querySelectorAll('.warranty-item').forEach(item => {
+          warrantyItems.push({
+            warrantyNumber: item.querySelector('.warranty-number').value,
+            productName: item.querySelector('.product-name').value,
+            tyreSize: item.querySelector('.tyre-size').value
+          });
+        });
+        
+        // Create payload
+        const payload = {
+          mobile: document.getElementById('mobile').value,
+          customerName: document.getElementById('customerName').value,
+          dealerName: document.getElementById('dealerName').value,
+          warrantyRegistrationDate: document.getElementById('warrantyDate').value,
+          warrantyDetails: warrantyItems
+        };
+        
+        // Send data to server
+        fetch('/api/submit-warranty', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+          const responseContainer = document.getElementById('responseContainer');
+          const responseTitle = document.getElementById('responseTitle');
+          const responseData = document.getElementById('responseData');
+          
+          responseContainer.style.display = 'block';
+          
+          if (data.success) {
+            responseContainer.className = 'response-container success';
+            responseTitle.textContent = 'Success!';
+          } else {
+            responseContainer.className = 'response-container error';
+            responseTitle.textContent = 'Error';
+          }
+          
+          responseData.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+          const responseContainer = document.getElementById('responseContainer');
+          const responseTitle = document.getElementById('responseTitle');
+          const responseData = document.getElementById('responseData');
+          
+          responseContainer.style.display = 'block';
+          responseContainer.className = 'response-container error';
+          responseTitle.textContent = 'Error';
+          responseData.textContent = 'An error occurred: ' + error.message;
+        });
+      });
+    });
+  </script>
+</body>
+</html> 
