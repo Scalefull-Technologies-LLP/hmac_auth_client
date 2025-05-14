@@ -71,7 +71,7 @@ The server will handle HMAC authentication with the main backend API automatical
 
 ### POST /api/submit-warranty
 
-Submits a warranty registration to the main backend at `http://localhost:8000/api/customers/customerWarranty`.
+Submits a warranty registration to the main backend at `https://ceat-signature-drive-api.bespokesol.com/api/customers/customerWarranty`.
 
 **Request Body:**
 
@@ -112,7 +112,7 @@ This server implements HMAC authentication for all communication with the main b
 
 If you encounter issues:
 
-1. Check that your main backend server is running at http://localhost:8000
+1. Check that your main backend server is running at https://ceat-signature-drive-api.bespokesol.com
 2. Verify that the API_SECRET matches on both servers
-3. Run the test script to verify API connectivity: `node test-api.js`
+
 4. Check the server logs for detailed error information 
